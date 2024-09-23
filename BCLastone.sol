@@ -1,78 +1,79 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
 
-contract tips {
+contract FamilyTips {
     address owner;
-    Waitress[]waitress;
+    FamilyMember[] familyMembers;
 
     constructor(){
         owner = msg.sender;
     }
-    //1.put fund in smart contract
 
-    function addtips() payable public {
+    //1. Add funds to the smart contract
+    function addFamilyFund() payable public {
 
     }
 
-    //2.view balance
-
-    function viewtips() public view returns(uint){
+    //2. View contract balance
+    function viewFamilyFund() public view returns(uint){
         return address(this).balance;
     }
 
-    //3.add waitress
-    struct Waitress{
+    //3. Family member struct
+    struct FamilyMember{
         address payable walletAddress;
         string name;
     }
-    //3.2 add waitress
-    function addWaitress(address payable walletAddress,string memory name)public {
-        require(msg.sender == owner,"Only the owner can call this function");
-        bool waitressExist = false;
 
-        if (waitress.length >=1){
-            for(uint i=0; i<waitress.length; i++){
-                if (waitress[i].walletAddress == walletAddress){
-                    waitressExist = true;
+    //4. Add family member
+    function addFamilyMember(address payable walletAddress, string memory name) public {
+        require(msg.sender == owner, "Only the owner can call this function");
+        bool familyMemberExists = false;
+
+        if (familyMembers.length >= 1) {
+            for (uint i = 0; i < familyMembers.length; i++) {
+                if (familyMembers[i].walletAddress == walletAddress) {
+                    familyMemberExists = true;
                 }
             }
         }
-        if(waitressExist==false){
-            waitress.push(Waitress(walletAddress,name));
+        if (familyMemberExists == false) {
+            familyMembers.push(FamilyMember(walletAddress, name));
         }
     }
 
-    //4.remove user
-    function removeWaitress(address payable walletAddress) public {
-        if(waitress.length>0){
-            for(uint i=0; i<waitress.length; i++){
-                if(waitress[i].walletAddress==walletAddress){
-                    for(uint j=i; j<waitress.length -1; j++){
-                        waitress[j]=waitress[j+1];
+    //5. Remove family member
+    function removeFamilyMember(address payable walletAddress) public {
+        if (familyMembers.length > 0) {
+            for (uint i = 0; i < familyMembers.length; i++) {
+                if (familyMembers[i].walletAddress == walletAddress) {
+                    for (uint j = i; j < familyMembers.length - 1; j++) {
+                        familyMembers[j] = familyMembers[j + 1];
                     }
-                    waitress.pop();
+                    familyMembers.pop();
                     break;
                 }
             }
         }
     }
 
-    //5.view uesr
-    function viewWaitress() public view returns(Waitress[] memory){
-        return waitress;
+    //6. View family members
+    function viewFamilyMembers() public view returns(FamilyMember[] memory) {
+        return familyMembers;
     }
 
-    //6.distribute tips
-    function distrubiteTips() public{
+    //7. Distribute family funds
+    function distributeFamilyFunds() public {
         require(address(this).balance > 0, "Insufficient balance in the contract");
-        if(waitress.length>=1){
-            uint amount = address(this).balance / waitress.length;
-            for(uint i=0; i<waitress.length; i++){
-                transfer(waitress[i].walletAddress,amount);
+        if (familyMembers.length >= 1) {
+            uint amount = address(this).balance / familyMembers.length;
+            for (uint i = 0; i < familyMembers.length; i++) {
+                transfer(familyMembers[i].walletAddress, amount);
             }
         }
     }
-    //transfer money
+
+    //8. Transfer money
     function transfer(address payable walletAddress, uint amount) internal {
         walletAddress.transfer(amount);
     }
